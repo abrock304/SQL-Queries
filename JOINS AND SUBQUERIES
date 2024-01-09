@@ -1,0 +1,152 @@
+
+SELECT tablename FROM pg_catalog.pg_tables
+
+SELECT A.staff_id,
+       D.country
+FROM staff A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_ID = D.country_ID
+
+-- customer --> address --> city --> country
+
+SELECT A.customer_id,
+A.first_name,
+A.last_name,
+D.country
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+GROUP BY country
+
+
+-- 1. Top 10 countries for Rockbuster in terms of customers
+SELECT 
+D.country_id, D.country, COUNT(customer_id) AS count_customers
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+GROUP BY D.country, D.country_id
+ORDER BY count_customers DESC
+LIMIT 10 
+
+
+-- 2. Top 10 cities within the top 10 countries
+
+SELECT C.city, D.country, COUNT(customer_id) AS count_customers
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+WHERE country IN ('India', 'China', 'United States', 'Japan', 'Mexico', 'Brazil', 'Russian Federation', 'Philippines', 'Turkey', 'Indonesia')
+GROUP BY C.city, D.country
+ORDER BY count_customers DESC
+LIMIT 10
+
+
+
+SELECT C.city, D.country, COUNT(customer_id) AS customer_count
+FROM customer A
+FULL JOIN address B ON A.address_id = B.address_id
+FULL JOIN city C ON B.city_id = C.city_id
+FULL JOIN country D ON C.country_id = D.country_id
+WHERE country = 'United States'
+GROUP BY city, country
+ORDER BY customer_count DESC
+
+
+-- 3. Top 5 customers from the top 10 cities who've paid the highest total amounts
+
+SELECT A.customer_id, B.first_name, B.last_name, E.country, D.city, SUM(amount) AS total_payment
+FROM payment A
+INNER JOIN customer B ON A.customer_id = B.customer_id
+INNER JOIN address C ON B.address_id = C.address_id
+INNER JOIN city D ON C.city_id = D.city_id
+INNER JOIN country E ON D.country_id = E.country_id
+WHERE city IN ('Aurora', 'Atlixco', 'Xintai', 'Adoni', 'Dhule (Dhulia)', 'Kurashiki', 'Pingxiang', 'Sivas', 'Celaya', 'So Leopoldo')
+GROUP BY A.customer_id, B.first_name, B.last_name, E.country, D.city
+ORDER BY total_payment DESC
+LIMIT 5
+
+
+----------------
+
+
+
+SELECT AVG(total_payment) AS average FROM
+(SELECT SUM(amount) AS total_payment
+FROM payment A
+INNER JOIN customer B ON A.customer_id = B.customer_id
+INNER JOIN address C ON B.address_id = C.address_id
+INNER JOIN city D ON C.city_id = D.city_id
+INNER JOIN country E ON D.country_id = E.country_id
+WHERE city IN
+(SELECT city
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+WHERE country IN
+(SELECT D.country
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+GROUP BY D.country
+HAVING COUNT(customer_id) > 0
+ORDER BY COUNT(customer_id) DESC
+LIMIT 10)
+GROUP BY C.city, D.country
+HAVING COUNT(customer_id) > 0
+ORDER BY COUNT(customer_id) DESC
+LIMIT 10)
+GROUP BY A.customer_id, B.first_name, B.last_name, E.country, D.city
+ORDER BY total_payment DESC
+LIMIT 5)
+Average: $ 107.35
+Step 2 :
+SELECT B.country, B.all_customer_count, A.top_customer_count FROM
+(SELECT country, COUNT(country) AS top_customer_count FROM
+(SELECT /*B.first_name, B.last_name,*/ E.country--, SUM(amount) AS total_payment
+FROM payment A
+INNER JOIN customer B ON A.customer_id = B.customer_id
+INNER JOIN address C ON B.address_id = C.address_id
+INNER JOIN city D ON C.city_id = D.city_id
+INNER JOIN country E ON D.country_id = E.country_id
+WHERE city IN
+(SELECT city
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+WHERE country IN
+(SELECT D.country
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+GROUP BY D.country
+HAVING COUNT(customer_id) > 0
+ORDER BY COUNT(customer_id) DESC
+LIMIT 10)
+GROUP BY C.city, D.country
+HAVING COUNT(customer_id) > 0
+ORDER BY COUNT(customer_id) DESC
+LIMIT 10)
+GROUP BY B.first_name, B.last_name, E.country
+ORDER BY SUM(amount) DESC
+LIMIT 5)
+GROUP BY country
+ORDER BY top_customer_count DESC) A
+LEFT JOIN
+(SELECT D.country, COUNT(DISTINCT customer_id) AS all_customer_count
+FROM customer A
+INNER JOIN address B ON A.address_id = B.address_id
+INNER JOIN city C ON B.city_id = C.city_id
+INNER JOIN country D ON C.country_id = D.country_id
+GROUP BY D.country
+ORDER BY all_customer_count DESC) B ON A.country = B.country
+GROUP BY B.country, B.all_customer_count, A.top_customer_count
+ORDER BY top_customer_count DESC, all_customer_count DESC
