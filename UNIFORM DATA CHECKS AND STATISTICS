@@ -1,0 +1,219 @@
+
+-- Check for duplicates
+SELECT title,
+       release_year,
+       language_id,
+       rental_duration,
+       COUNT(*)
+FROM film
+GROUP BY title,
+         release_year,
+         language_id,
+         rental_duration
+HAVING COUNT(*) >1; --no result set means we have no duplicates
+
+
+-- Compare to distinct for match
+SELECT title,
+       release_year,
+       language_id,
+       rental_duration
+FROM film
+GROUP BY title,
+         release_year,
+         language_id,
+         rental_duration;
+		 
+SELECT DISTINCT title,
+                release_year,
+                language_id,
+                rental_duration
+FROM film;
+SELECT * FROM film
+
+
+SELECT DISTINCT rating FROM film
+
+-- Descriptive statistics on rental_rate
+
+SELECT MIN(rental_rate) AS min_rent,
+       MAX(rental_rate) AS max_rent,
+       AVG(rental_rate) AS avg_rent,
+       COUNT(rental_rate) AS count_rent_values,
+       COUNT(*) AS count_rows
+FROM film;
+
+-- Mode title
+SELECT MODE() WITHIN GROUP (ORDER BY title)
+       AS modal_value
+FROM film;
+
+-- Count the number of movies for each rating
+SELECT rating,
+       COUNT(*) AS rating_count
+FROM film
+GROUP BY rating
+ORDER BY COUNT(*) DESC
+
+--3.6 Task
+
+-- check for and clean dirty data
+
+--1a
+-- duplicates for film
+SELECT film_id, title, description, release_year, language_id, rental_duration, rental_rate,
+length, replacement_cost, rating, last_update, special_features, fulltext,
+COUNT(*)
+FROM film
+GROUP BY film_id, title, description, release_year, language_id, rental_duration, rental_rate,
+length, replacement_cost, rating, last_update, special_features, fulltext
+HAVING COUNT(*) >1 
+
+--duplicates for customer
+SELECT customer_id, store_id, first_name, last_name, email, address_id, activebool, create_date,
+last_update, active, COUNT(*)
+FROM customer
+GROUP BY customer_id, store_id, first_name, last_name, email, address_id, activebool, create_date,
+last_update, active
+HAVING COUNT(*) >1
+
+---------------------------------
+
+--1b
+-- check for uniform data
+SELECT DISTINCT title,
+                release_year,
+                language_id,
+                rental_duration
+FROM film;
+
+SELECT DISTINCT release_year FROM film
+SELECT DISTINCT rental_duration FROM film
+SELECT DISTINCT rental_rate FROM film
+SELECT DISTINCT length FROM film
+ORDER BY length
+SELECT DISTINCT rating FROM film
+
+SELECT title FROM film
+WHERE title = NULL
+
+SELECT * FROM film
+SELECT COUNT(*) FROM film
+
+--NULL values for film------
+SELECT COUNT(film_id) AS cnt_film_id, COUNT(title) AS cnt_title, COUNT(description)AS cnt_description, COUNT(release_year) AS cnt_release_year,
+COUNT(language_id) AS cnt_language_id, COUNT(rental_duration) AS cnt_rental_duration, COUNT(rental_rate) AS cnt_rental_rate, COUNT(length)AS cnt_length, 
+COUNT(replacement_cost) AS cnt_replacement_cost, COUNT(rating) AS cnt_rating, COUNT(last_update) AS cnt_last_update, COUNT(special_features) AS cnt_special_features, 
+COUNT(fulltext) AS cnt_fulltext,
+COUNT(*) AS count_rows
+FROM film
+
+-- NULL values for customer-----
+SELECT COUNT(customer_id) AS cnt_customer_id, 
+COUNT(store_id) AS cnt_store_id, 
+COUNT(first_name)AS cnt_first_name, 
+COUNT(last_name) AS cnt_last_name,
+COUNT(email) AS cnt_email, 
+COUNT(address_id) AS cnt_address_id, 
+COUNT(activebool) AS cnt_activebool, 
+COUNT(create_date)AS cnt_create_date, 
+COUNT(last_update) AS cnt_last_update, 
+COUNT(active) AS cnt_active,
+COUNT(*) AS count_rows
+FROM customer
+
+
+SELECT * FROM customer
+SELECT DISTINCT title FROM film
+
+SELECT first_name, last_name, email 
+FROM customer
+GROUP BY first_name, last_name, email
+ORDER BY last_name
+
+SELECT DISTINCT store_id FROM customer
+SELECT DISTINCT active FROM customer
+SELECT DISTINCT first_name, last_name FROM customer
+SELECT store_id FROM customer
+SELECT store_id FROM customer
+
+--2
+--film table (rental duration, rental_rate, length, replacement_cost, rating, special features
+
+SELECT  FROM film
+
+SELECT MIN(release_year) AS min_release_year,
+MAX(release_year) AS max_release_year,
+AVG(release_year) AS avg_release_year,
+MIN(rental_duration) AS min_rental_duration,
+MAX(rental_duration) AS max_rental_duration,
+AVG(rental_duration) AS avg_rental_duration, 
+MIN(rental_rate) AS min_rental_rate,
+MAX(rental_rate) AS max_rental_rate,
+AVG(rental_rate) AS avg_rental_rate, 
+MIN(length) AS min_length,
+MAX(length) AS max_length,
+AVG(length) AS avg_length, 
+MIN(replacement_cost) AS min_replacement_cost,
+MAX(replacement_cost) AS max_replacement_cost,
+AVG(replacement_cost) AS avg_replacement_cost
+FROM film
+
+SELECT
+MODE() WITHIN GROUP (ORDER BY title) 
+AS mode_title,
+MODE() WITHIN GROUP (ORDER BY description) 
+AS mode_description,
+MODE() WITHIN GROUP (ORDER BY language_id) 
+AS mode_language_id,
+MODE() WITHIN GROUP (ORDER BY rating) 
+AS mode_rating,
+MODE() WITHIN GROUP (ORDER BY last_update) 
+AS mode_last_update,
+MODE() WITHIN GROUP (ORDER BY special_features) 
+AS mode_special_features,
+MODE() WITHIN GROUP (ORDER BY fulltext) 
+AS mode_fulltext
+FROM film;
+
+-- customer table statistics
+
+SELECT * FROM customer
+
+SELECT MIN(store_id) AS min_store_id,
+MAX(store_id) AS max_store_id,
+AVG(store_id) AS avg_store_id,
+MIN() AS min_rental_duration,
+MAX(rental_duration) AS max_rental_duration,
+AVG(rental_duration) AS avg_rental_duration, 
+MIN(rental_rate) AS min_rental_rate,
+MAX(rental_rate) AS max_rental_rate,
+AVG(rental_rate) AS avg_rental_rate, 
+MIN(length) AS min_length,
+MAX(length) AS max_length,
+AVG(length) AS avg_length, 
+MIN(replacement_cost) AS min_replacement_cost,
+MAX(replacement_cost) AS max_replacement_cost,
+AVG(replacement_cost) AS avg_replacement_cost
+FROM film
+
+SELECT
+MODE() WITHIN GROUP (ORDER BY first_name) 
+AS mode_first_name,
+MODE() WITHIN GROUP (ORDER BY last_name) 
+AS mode_last_name,
+MODE() WITHIN GROUP (ORDER BY email) 
+AS mode_email,
+MODE() WITHIN GROUP (ORDER BY activebool) 
+AS mode_activebool,
+MODE() WITHIN GROUP (ORDER BY create_date) 
+AS mode_create_date,
+MODE() WITHIN GROUP (ORDER BY last_update) 
+AS mode_last_update,
+MODE() WITHIN GROUP (ORDER BY active) 
+AS mode_active
+FROM customer;
+
+
+
+
