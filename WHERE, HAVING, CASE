@@ -1,0 +1,118 @@
+SELECT * FROM film
+WHERE title = 'Chamber Italian'
+
+
+-- Select everything where the rental rate is between 0 and 2.99
+SELECT * FROM film
+WHERE rental_rate BETWEEN 0.00 AND 2.99
+
+
+-- Select all information from film if they have been updated between 5/20 and 5/30
+SELECT * FROM film
+WHERE last_update BETWEEN '2013-05-20' AND '2013-05-30'
+
+-- Select PG movies that cost less than 2.00
+SELECT * FROM film
+WHERE rating = 'PG' OR rental_rate < 2.00
+
+-- Select PG movies that cost more than 2.99
+SELECT title, description, rating, rental_rate FROM film
+WHERE rating = 'PG' AND NOT rental_rate < 2.00
+
+-- wildcard % to display anything that has the word 'Italian'
+SELECT title FROM film
+WHERE title LIKE '%Italian%'
+
+SELECT * FROM film
+
+--ANSWERS 3.5
+
+--1a-- Film title contains the word 'Uptown' in any position
+
+SELECT film_id, title, description FROM film
+WHERE title LIKE '%Uptown%'
+
+--1b-- Film length is more than 120 minutes and rental rate is more than 2.99
+
+SELECT film_id, title, description, length, rental_rate FROM film
+WHERE length > 120 AND rental_rate > 2.99
+ORDER BY rental_rate DESC, length
+
+
+--1c-- Rental duration is between 3 and 7 days (noninclusive)
+
+SELECT film_id, title, description, rental_duration FROM film
+WHERE rental_duration BETWEEN 4 AND 6
+
+
+--1d-- Film replacement cost is less than 14.99
+
+SELECT film_id, title, description, replacement_cost FROM film
+WHERE replacement_cost < 14.99
+ORDER BY replacement_cost DESC
+
+
+--1e-- Film rating is either 'PG' or 'G'
+
+SELECT film_id, title, description, rating FROM film
+WHERE rating IN ('PG', 'G')
+ORDER BY rating, film_id
+
+
+--3a-- Count of movies (PG or G)
+
+SELECT COUNT(rating) AS count_of_movies FROM film
+WHERE rating IN ('PG', 'G')
+
+
+
+--3b-- Average movie rental rate
+
+SELECT AVG(rental_rate) AS average_movie_rental_rate FROM film
+WHERE rating IN ('PG', 'G')
+
+
+--3c-- Maximum rental duration
+
+SELECT MAX(rental_duration) AS maximum_rental_duration FROM film
+WHERE rating IN ('PG', 'G')
+
+
+
+--3d-- Minimum rental duration
+
+SELECT MIN(rental_duration) AS minimum_rental_duration FROM film
+WHERE rating IN ('PG', 'G')
+
+
+--4a-- Count of movies (PG or G)
+
+SELECT DISTINCT rating, COUNT(rating) AS count_of_movies FROM film
+GROUP BY rating
+HAVING rating IN ('PG', 'G')
+ORDER BY count_of_movies DESC
+
+
+--4b-- Average movie rental rate
+
+SELECT DISTINCT rating, AVG(rental_rate) AS average_movie_rental_rate FROM film
+GROUP BY rating
+HAVING rating IN ('PG', 'G')
+ORDER BY average_movie_rental_rate DESC
+
+--4c-- Maximum rental duration
+
+SELECT DISTINCT rating, MAX(rental_duration) AS maximum_rental_duration FROM film
+GROUP BY rating
+HAVING rating IN ('PG', 'G')
+ORDER BY maximum_rental_duration DESC
+
+
+--4d-- Minimum rental duration
+
+SELECT DISTINCT rating, MIN(rental_duration) AS minimum_rental_duration FROM film
+GROUP BY rating
+HAVING rating IN ('PG', 'G')
+ORDER BY minimum_rental_duration DESC
+
+
