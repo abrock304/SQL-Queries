@@ -1,0 +1,32 @@
+
+
+SELECT category_id, name FROM category
+   
+   
+   INSERT INTO category(name)
+   VALUES('Thriller');
+   INSERT INTO category(name)
+   VALUES('Crime');
+   INSERT INTO category(name)
+   VALUES('Mystery');
+   INSERT INTO category(name)
+   VALUES('Romance');
+   INSERT INTO category(name)
+   VALUES('War');
+   
+   SELECT film_id, title FROM film
+  WHERE title = 'African Egg'
+   
+   SELECT * FROM film_category
+ 
+   SELECT * FROM category
+   
+   UPDATE film_category
+   SET category_id = 17
+   WHERE film_id = 5
+   
+   DELETE FROM category
+   WHERE category_id = 19
+   
+   SELECT * FROM category -- To check if the mystery category was deleted
+   
