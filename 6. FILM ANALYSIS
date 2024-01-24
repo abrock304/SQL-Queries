@@ -1,0 +1,49 @@
+------------ Film Insights ---------------------
+
+-- Top 10 films
+
+SELECT D.title, SUM(amount) as revenue
+FROM payment A
+INNER JOIN rental B ON A.customer_id = B.customer_id
+INNER JOIN inventory C ON B.inventory_id = C.inventory_id
+INNER JOIN film D ON C.film_id = D.film_id
+GROUP BY D.title
+ORDER BY revenue DESC
+LIMIT 10
+
+
+-- Top Ratings
+
+SELECT D.rating, SUM(amount) as revenue
+FROM payment A
+INNER JOIN rental B ON A.customer_id = B.customer_id
+INNER JOIN inventory C ON B.inventory_id = C.inventory_id
+INNER JOIN film D ON C.film_id = D.film_id
+GROUP BY D.rating
+ORDER BY revenue DESC
+
+
+-- Top Genres
+
+SELECT E.name, SUM(amount) as revenue
+FROM payment A
+INNER JOIN rental B ON A.customer_id = B.customer_id
+INNER JOIN inventory C ON B.inventory_id = C.inventory_id
+INNER JOIN film_category D ON C.film_id = D.film_id
+INNER JOIN category E ON D.category_id = E.category_id
+GROUP BY E.name
+ORDER BY revenue DESC
+
+
+-- Number of films in each genre
+
+SELECT E.name, COUNT(C.film_id) as films
+FROM payment A
+INNER JOIN rental B ON A.customer_id = B.customer_id
+INNER JOIN inventory C ON B.inventory_id = C.inventory_id
+INNER JOIN film_category D ON C.film_id = D.film_id
+INNER JOIN category E ON D.category_id = E.category_id
+GROUP BY E.name
+ORDER BY films DESC
+
+
