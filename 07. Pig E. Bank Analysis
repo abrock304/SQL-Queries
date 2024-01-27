@@ -1,0 +1,65 @@
+SELECT * FROM pig_e_bank
+
+DROP TABLE IF EXISTS pig_e_bank
+
+CREATE TABLE pig_e_bank(
+	customer_id INT PRIMARY KEY,
+	credit_score INT,
+	country VARCHAR(20),
+	gender VARCHAR(20),
+	age INT,
+	tenure INT,
+	balance FLOAT,
+	num_of_products INT, 
+	has_credit_card VARCHAR(5),
+	active_member VARCHAR(5),
+	salary FLOAT,
+	exited_from_bank VARCHAR(5)
+	)
+	
+SELECT * FROM pig_e_bank
+	
+COPY pig_e_bank 
+FROM '/Users/abrockk12.wv.us/Documents/pigEbank.csv'
+DELIMITER ','
+CSV HEADER
+;	
+
+
+SELECT country, COUNT(customer_id) as active_members
+FROM pig_e_bank
+WHERE exited_from_bank = 'Yes'
+AND age <40
+GROUP BY country
+
+SELECT country, exited_from_bank, COUNT(customer_id) as active_members
+FROM pig_e_bank
+GROUP BY num_of_products, exited_from_bank
+ORDER BY active_members DESC
+
+
+ALTER TABLE pig_e_bank ADD age_flag VARCHAR(10);
+
+UPDATE pig_e_bank
+SET age_flag = '<40'
+WHERE age <40
+
+UPDATE pig_e_bank
+SET age_flag = '40+'
+WHERE age >=40
+
+
+SELECT age_flag, COUNT(customer_id) as members
+FROM pig_e_bank
+WHERE exited_from_bank = 'Yes'
+GROUP BY age_flag
+
+
+
+SELECT country, COUNT(customer_id) as members
+FROM pig_e_bank
+WHERE age_flag = '<40'
+AND exited_from_bank = 'Yes'
+GROUP BY country
+
+
